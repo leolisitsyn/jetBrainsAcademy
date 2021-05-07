@@ -1,0 +1,158 @@
+import java.util.Scanner;
+
+public class Main {
+    static Scanner sc = new Scanner(System.in);
+    static char[][] chars;
+    static boolean even = true;
+
+    static char[][] createCharArray() {
+        // char[] str = sc.nextLine().toCharArray();
+        char[][] chars = new char[3][3];
+        for (int i = 0; i < 9; i++) {
+            chars[i / 3][i % 3] = '_';
+        }
+        return chars;
+    }
+
+    static void drawField(char[][] chars) {
+        for (int i = 0; i < 9; i++) {
+            System.out.print("-");
+        }
+        System.out.println();
+
+        for (int i = 0; i < 3; i++) {
+            System.out.print("| ");
+            for (int j = 0; j < 3; j++) {
+                System.out.print(chars[i][j] + " ");
+            }
+            System.out.print("|");
+            System.out.println();
+        }
+        for (int i = 0; i < 9; i++) {
+            System.out.print("-");
+        }
+        System.out.println();
+    }
+
+    static String checkField() {
+        boolean xWins = false;
+        boolean yWins = false;
+        boolean possible = false;
+        boolean finished = false;
+
+        int xCount = 0;
+        int yCount = 0;
+        int empty = 0;
+
+        String res = "";
+
+        if ((chars[0][0] + chars[0][1] + chars[0][2] == 264) ||
+            (chars[1][0] + chars[1][1] + chars[1][2] == 264) ||
+            (chars[2][0] + chars[2][1] + chars[2][2] == 264) ||
+            (chars[0][0] + chars[1][1] + chars[2][2] == 264) ||
+            (chars[0][2] + chars[1][1] + chars[2][0] == 264) ||
+            (chars[0][0] + chars[1][0] + chars[2][0] == 264) ||
+            (chars[0][1] + chars[1][1] + chars[2][1] == 264) ||
+            (chars[0][2] + chars[1][2] + chars[2][2] == 264)) {
+            xWins = true;
+        }
+
+        if ((chars[0][0] + chars[0][1] + chars[0][2] == 237) ||
+            (chars[1][0] + chars[1][1] + chars[1][2] == 237) ||
+            (chars[2][0] + chars[2][1] + chars[2][2] == 237) ||
+            (chars[0][0] + chars[1][1] + chars[2][2] == 237) ||
+            (chars[0][2] + chars[1][1] + chars[2][0] == 237) ||
+            (chars[0][0] + chars[1][0] + chars[2][0] == 237) ||
+            (chars[0][1] + chars[1][1] + chars[2][1] == 237) ||
+            (chars[0][2] + chars[1][2] + chars[2][2] == 237)) {
+            yWins = true;
+        }
+
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                if (chars[i][j] == 'X') {
+                    xCount++;
+                } else if (chars[i][j] == 'O') {
+                    yCount++;
+                } else {
+                    empty++;
+                }
+            }
+        }
+
+        if (empty == 0) {
+            finished = true;
+        }
+
+        if ((xWins && yWins) ||
+                Math.abs(xCount - yCount) > 1) {
+            possible = false;
+        } else {
+            possible = true;
+        }
+
+        if (xWins && possible) {
+            res = "X wins";
+        } else if (yWins && possible) {
+            res = "O wins";
+        } else if (!possible) {
+            res = "Impossible";
+        } else if (!xWins && !yWins && finished) {
+            res = "Draw";
+        } else {
+            res = "Game not finished";
+        }
+
+        return res;
+    }
+
+    static void move() {
+        while (true) {
+            System.out.println("Enter the coordinates:");
+            String[] inp = sc.nextLine().split(" ");
+
+            try {
+                int x = Integer.parseInt(inp[0]);
+                int y = Integer.parseInt(inp[1]);
+
+                if (x - 1 < 0 || x - 1 > 2 ||
+                        y - 1 < 0 || y - 1 > 2) {
+                    System.out.println("Coordinates should be from 1 to 3!");
+                } else if (chars[x - 1][y - 1] == 'X' || chars[x - 1][y - 1] == 'O') {
+                    System.out.println("This cell is occupied! Choose another one!");
+                } else {
+
+                    if (even) {
+                        chars[x - 1][y - 1] = 'X';
+                    } else {
+                        chars[x - 1][y - 1] = 'O';
+                    }
+                    even = !even;
+
+                    break;
+                }
+
+            } catch (Exception e) {
+                System.out.println("You should enter numbers!");
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        String result = "";
+
+        chars = createCharArray();
+
+        drawField(chars);
+
+        for (int i = 0; i < 9; i++) {
+            move();
+            drawField(chars);
+            result = checkField();
+            if (result.equals("X wins") || result.equals("O wins")) {
+                break;
+            }
+        }
+        System.out.println(result);
+    }
+}
